@@ -1,0 +1,367 @@
+/* ============================================================================
+   THEME — "Scoreboard"
+   Submission 5. Loaded AFTER app.css, so it only overrides.
+
+   Direction: the interface is a stadium scoreboard. A dark green board,
+   lime LED figures, amber for live, and a perforated dot matrix behind
+   every numeral so the scores look lit from behind rather than printed.
+
+   Two deliberate restraints:
+   1. The bet slip stays ordinary. A stake is the one number a player
+      must not have to decode, so it gets plain high-contrast type.
+   2. Only the numerals are LED. Team names, market names and prices
+      stay in normal type — a board where everything glows is unreadable.
+
+   The Housebets mark is untouched: same SVG, recoloured to lime.
+
+   To switch direction, replace this file only. Nothing else changes.
+   ========================================================================= */
+
+:root{
+  /* ---- surfaces: the board itself ---- */
+  --page:      #08160F;
+  --bar:       #0A1E14;
+  --card:      #0E2A1C;
+  --card-2:    #0A2015;
+  --tile:      #123625;
+  --tile-2:    #16402B;
+  --tile-hi:   #1D5136;
+  --hair:      rgba(200,255,61,.13);
+  --hair-2:    rgba(200,255,61,.26);
+
+  /* ---- ink: green-tinted light, easy on the board ---- */
+  --ink:       #E9FFDC;
+  --ink-2:     #A9D6B8;
+  --ink-3:     #7FA98D;
+  --ink-4:     #5F8A70;
+
+  /* ---- semantic text colours ---- */
+  --c-score:   #EAFFC0;   /* the lit figure */
+  --c-team:    #DFF3E2;
+  --c-market:  #8FBB9C;
+  --c-price:   #C8FF3D;   /* lime LED — the one accent */
+
+  /* ---- accent: lime wears the role cyan had in the sent entries ---- */
+  --aqua:      #C8FF3D;
+  --aqua-hi:   #E9FFA8;
+  --aqua-deep: #1E3D0A;
+  --aqua-deep2:#172E08;
+
+  --lime:      #9FD94F;
+  --lime-deep: #1E3D0A;
+  --lime-soft: rgba(200,255,61,.13);
+
+  --live:      #FF6B3D;   /* amber LED */
+  --live-tx:   #FF9E75;
+  --live-badge:#C2410C;   /* dark enough for white text on top */
+  --up:        #C8FF3D;
+  --down:      #FF8A5C;
+  --gold:      #C8FF3D;
+
+  /* ---- the sports column: the board's darker side panel ------------
+     A deeper inset green, so the nav reads as the frame of the board
+     rather than as another lit panel competing with the scores.
+  ------------------------------------------------------------------- */
+  --sport-bg:      #05130C;
+  --sport-edge:    rgba(200,255,61,.18);
+  --sport-ink:     #A9D6B8;
+  --sport-head:    #8AC19C;
+  --sport-hover:   rgba(200,255,61,.09);
+  --sport-n-bg:    rgba(200,255,61,.13);
+  --sport-n-ink:   #C6E8CE;
+  --sport-on-bg:   rgba(200,255,61,.16);
+  --sport-on-bar:  #C8FF3D;
+  --sport-on-ink:  #F4FFE4;
+  --sport-on-n-bg: rgba(200,255,61,.28);
+  --sport-on-n-ink:#E6FFC4;
+  --sport-thumb:   #1E3D2B;
+
+  /* hardware corners — square enough to read as a fixture, not a card */
+  --r-sm: 3px;
+  --r:    5px;
+  --r-lg: 7px;
+
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+  --led:  ui-monospace, SFMono-Regular, Menlo, Consolas,
+          "Liberation Mono", monospace;
+}
+
+/* ============================================================================
+   THE BOARD
+   A perforated LED grid over a dark green slab, with a faint scanline
+   pass and one floodlight bloom across the top edge.
+   ========================================================================= */
+body{
+  background-color:#08160F;
+  background-image:
+    /* the perforations of the LED wall */
+    radial-gradient(rgba(200,255,61,.045) .6px, transparent .7px),
+    /* scanlines */
+    repeating-linear-gradient(0deg, rgba(0,0,0,.18) 0 1px, transparent 1px 3px),
+    /* floodlight */
+    radial-gradient(1100px 520px at 50% -16%, rgba(200,255,61,.10), transparent 62%),
+    /* the slab */
+    linear-gradient(180deg, #0B2015 0%, #08160F 55%, #050F0A 100%);
+  background-size: 5px 5px, auto, auto, auto;
+  background-attachment: fixed, fixed, fixed, fixed;
+  min-height:100vh;
+}
+
+/* let the board show through the app's own painted surfaces */
+.shell, .app, #app{
+  background:transparent !important;
+}
+
+/* the top bar sits on the board with a lime underline */
+.bar, .topbar{
+  background:rgba(8,22,15,.90) !important;
+  border-bottom:1px solid rgba(200,255,61,.20) !important;
+  backdrop-filter:blur(8px);
+}
+
+/* every panel gets the board's frame */
+.main, .panel{
+  box-shadow:inset 0 0 0 1px rgba(200,255,61,.09);
+}
+
+/* ============================================================================
+   Overrides for colours app.css hardcodes.
+   Each names the app.css line it replaces.
+   ========================================================================= */
+
+/* L123 / L750 / L786 / L845 / L895 — accent buttons become lime */
+.pillbtn.acc,
+.modal .card .acts .p,
+button.primary,
+.cta,
+.btn-acc{
+  background:linear-gradient(180deg,#D9FF86,#96D826) !important;
+  color:#0A1E05 !important;
+  border-color:rgba(200,255,61,.45) !important;
+}
+
+/* L167 — active rail item */
+.rail button.on{
+  color:var(--sport-on-ink) !important;
+  background:var(--sport-on-bg) !important;
+  box-shadow:inset 2px 0 0 var(--sport-on-bar) !important;
+}
+
+/* ---- the Live entry is lit, in amber --------------------------------
+   Same two homes as before — the left column on desktop and the tab
+   strip below 980px where that column is hidden — but the colour is
+   now the board's amber, matching every LIVE badge on the board.
+------------------------------------------------------------------- */
+.rail button.is-live{
+  color:#FFE0D2 !important;
+  background:linear-gradient(90deg, rgba(255,107,61,.20), rgba(255,107,61,.05)) !important;
+  box-shadow:inset 0 0 0 1px rgba(255,107,61,.30), 0 0 14px rgba(255,107,61,.18) !important;
+}
+.rail button.is-live.on{
+  color:#FFF6F0 !important;
+  background:linear-gradient(90deg, rgba(255,107,61,.30), rgba(200,255,61,.10)) !important;
+  box-shadow:inset 2px 0 0 var(--live), 0 0 18px rgba(255,107,61,.34) !important;
+}
+.rail button.is-live .n{
+  background:rgba(255,107,61,.24) !important;
+  color:#FFE0D2 !important;
+}
+
+.rail button .ldot,
+.tab.is-live::after{
+  width:7px; height:7px; border-radius:99px; background:var(--live);
+  box-shadow:0 0 0 3px rgba(255,107,61,.18), 0 0 10px rgba(255,107,61,.85);
+  animation:ldotPulse 1.6s ease-in-out infinite;
+}
+.rail button .ldot{ flex:0 0 auto; order:1; margin-left:7px; }
+.rail button .n{ order:2; }
+.tab.is-live::after{ content:""; position:absolute; top:7px; right:7px; }
+
+@keyframes ldotPulse{
+  0%,100%{ opacity:1;   box-shadow:0 0 0 3px rgba(255,107,61,.20), 0 0 10px rgba(255,107,61,.85); }
+  50%    { opacity:.45; box-shadow:0 0 0 5px rgba(255,107,61,.05), 0 0  6px rgba(255,107,61,.40); }
+}
+@media (prefers-reduced-motion:reduce){
+  .rail button .ldot,
+  .tab.is-live::after{ animation:none; }
+}
+
+.tab.is-live{
+  border-color:rgba(255,107,61,.48) !important;
+  box-shadow:0 1px 0 rgba(255,255,255,.10) inset, 0 0 16px rgba(255,107,61,.30) !important;
+}
+.tab.is-live.on{
+  border-color:var(--live) !important;
+  box-shadow:0 1px 0 rgba(255,255,255,.12) inset, 0 0 20px rgba(255,107,61,.44) !important;
+}
+.rail .rhead{ color:var(--sport-head) !important; }
+.rail button .n{
+  background:var(--sport-n-bg) !important;
+  color:var(--sport-n-ink) !important;
+}
+.rail button.on .n{
+  background:var(--sport-on-n-bg) !important;
+  color:var(--sport-on-n-ink) !important;
+}
+
+/* L303 / L818 / L900 — dropdowns, popovers, modals */
+.menu, .pop, .modal .card, .sheet{
+  background:#0E2A1C !important;
+  border:1px solid rgba(200,255,61,.22) !important;
+  box-shadow:0 18px 40px rgba(0,0,0,.60) !important;
+}
+
+/* L339 / L344 / L348 — text that sat on dark and still does */
+.h1, .h2, .ttl, .mname,
+.tab[data-tab="live"],
+.tab[data-tab="live"].on{
+  color:var(--ink) !important;
+}
+
+/* L349 — focus border */
+*:focus-visible, .sel:focus-visible{
+  border-color:var(--aqua) !important;
+}
+
+/* L350 — selected control */
+.o.sel, .tab.on, .chip.on{
+  background:linear-gradient(180deg,#20360F 0%, #16260A 100%) !important;
+  border-color:rgba(200,255,61,.55) !important;
+}
+
+/* L600 — pre-match odds tiles */
+.mcard.pre .o{
+  background:#0E2A1C !important;
+  border-color:rgba(255,255,255,.07) !important;
+}
+.mcard.pre .o .oname{ color:var(--ink-3) !important; }
+
+/* L691 — small accent badge */
+.badge{
+  background:var(--aqua) !important;
+  color:#0A1E05 !important;
+}
+
+/* L810 — accent CTA */
+.cta-gold, button.gold{
+  background:linear-gradient(180deg,#D9FF86,#96D826) !important;
+  color:#0A1E05 !important;
+}
+
+/* L867 — avatar / mark chip */
+.avatar, .markchip{
+  background:var(--aqua) !important;
+  color:#0A1E05 !important;
+}
+
+/* ============================================================================
+   THE LED FIGURES
+   The signature of the direction: the score and the clock are lit from
+   behind, sitting in a dark inset panel with a dot matrix laid over the
+   top so the numerals read as made of lamps.
+   ========================================================================= */
+
+/* the panel the figures sit in — dark, inset, framed */
+.sb-nums,
+.hscore{
+  position:relative;
+  padding:5px 13px;
+  border-radius:5px;
+  background:#04120A;
+  border:1px solid #1E3D2B;
+  box-shadow:inset 0 2px 10px rgba(0,0,0,.75);
+}
+.sb-nums::after,
+.hscore::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  border-radius:5px;
+  background-image:radial-gradient(rgba(0,0,0,.50) .5px, transparent .6px);
+  background-size:3px 3px;
+  opacity:.5;
+}
+
+/* the figures themselves */
+.sb-num,
+.hscore b{
+  font-family:var(--led) !important;
+  font-weight:700 !important;
+  letter-spacing:.02em;
+  color:#EAFFC0 !important;
+  text-shadow:0 0 7px rgba(200,255,61,.55), 0 0 20px rgba(200,255,61,.22);
+}
+.hscore b{ color:#EAFFC0 !important; }
+.sb-dash, .hscore span{
+  font-family:var(--led) !important;
+  color:#7FA98D !important;
+}
+
+/* every clock on the board, in amber so it reads as the live signal */
+.sb-top .k,
+.hkick,
+.hlive,
+.clock,
+.mrow .day{
+  font-family:var(--led) !important;
+  letter-spacing:.02em;
+}
+.sb-top .k, .clock{ color:var(--live-tx) !important; }
+
+/* the scoreboard panel takes the board frame */
+.scoreboard{
+  background:#0E2A1C !important;
+  border:1px solid rgba(200,255,61,.20) !important;
+}
+.scoreboard.live{ box-shadow:inset 3px 0 0 rgba(255,107,61,.85) !important; }
+
+/* ============================================================================
+   THE BET SLIP STAYS ORDINARY
+   Deliberate. A stake is the one number a player must never have to
+   decode, so it gets a bright field, dark ink and no glow at all.
+   ========================================================================= */
+input[data-stake],
+.slipbar input,
+.sheet input,
+.stake{
+  background:#F2FBEE !important;
+  color:#0A1E05 !important;
+  border:1px solid rgba(200,255,61,.55) !important;
+  font-variant-numeric:tabular-nums;
+  text-shadow:none !important;
+}
+.slipbar input::placeholder,
+.sheet input::placeholder{ color:#5F8A70 !important; }
+
+/* ============================================================================
+   Detail work
+   ========================================================================= */
+
+/* section headings get a hairline lime rule, like a board divider */
+.sect h2, .sect .h2{
+  border-bottom:1px solid rgba(200,255,61,.18);
+  padding-bottom:7px;
+}
+
+/* crest tiles: a faint lime ring so they sit well on the board */
+.crest{
+  box-shadow:0 0 0 1px rgba(200,255,61,.20);
+  border-radius:4px;
+}
+
+/* live badge: amber, and never mistaken for the lime prices */
+.livebadge{
+  background:var(--live-badge) !important;
+  color:#FFF1E8 !important;
+  box-shadow:0 0 12px rgba(255,107,61,.40) !important;
+}
+
+/* prices — tabular so they never shift as they move */
+.oval, .o .oval{
+  font-variant-numeric:tabular-nums lining-nums;
+  letter-spacing:.2px;
+}
+
+/* cards pick up a whisper of lime along their top edge */
+.card, .mcard{
+  border-top-color:rgba(200,255,61,.14) !important;
+}
